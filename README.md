@@ -15,11 +15,11 @@ Zhiyuan Zeng*, Hamish Ivison*, Yiping Wang*, Lifan Yuan*, Shuyue Stella Li, Zhuo
 If you find our work useful, please consider citing:
 
 ```bibtex
-@article{zeng2025rlve,
+@inproceedings{zeng2026rlve,
   title={RLVE: Scaling Up Reinforcement Learning for Language Models with Adaptive Verifiable Environments},
   author={Zeng, Zhiyuan and Ivison, Hamish and Wang, Yiping and Yuan, Lifan and Li, Shuyue Stella and Ye, Zhuorui and Li, Siting and He, Jacqueline and Zhou, Runlong and Chen, Tong and Zhao, Chenyang and Tsvetkov, Yulia and Du, Simon Shaolei and Jaques, Natasha and Peng, Hao and Koh, Pang Wei and Hajishirzi, Hannaneh},
-  journal={arXiv preprint 2511.07317},
-  year={2025}
+  booktitle={International Conference on Machine Learning (ICML)},
+  year={2026}
 }
 ```
 
