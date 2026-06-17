@@ -39,6 +39,50 @@
 
 # 新增环境设计
 
+给出难度d
+
+## digit_sum_interval
+
+给定 L, R，求区间内所有整数的数位和之和。
+
+难度设定：
+  max_digits = min(2 + d // 10, 12)
+  span_digits = min(1 + d // 15, max_digits)
+  allow_arbitrary_L = (d >= 20)
+
+  生成时可以这样：
+
+  R_max = 10 ** max_digits - 1
+  R = random.randint(1, R_max)
+
+  span_max = min(10 ** span_digits - 1, R - 1)
+  span = random.randint(0, span_max)
+
+  if allow_arbitrary_L:
+      L = R - span
+  else:
+      L = 1
+
+## binary_string_no_adjacent_count
+
+长度为 n 的 01 串中，不含相邻两个 1 的串有多少个。
+
+难度设定：
+  长度为d
+
+## grid_path_counting_with_blocks
+
+给一个正方形小网格和若干障碍，求从左上到右下路径数。
+
+难度设定：
+  边长= min(2 + d // 8, 14)，障碍比例p
+
+  if d < 20:
+      p = 0.05 + 0.005 * d
+  elif td < 50:
+      p = 0.15 + 0.002 * (d - 20)
+  else:
+      p = 0.21
 
 # 实验
 
@@ -66,8 +110,9 @@
 #### 环境
 
 - Gym/environments/division
-
-
+- digit_sum_interval
+- binary_string_no_adjacent_count
+- grid_path_counting_with_blocks
 
 ## 实验2: 不同数量的环境按照Adaptive训练，在held-out的表现
 
@@ -81,7 +126,7 @@
 #### 指标
 
 - 分布外accuracy
-    在新增的几个环境、难度[1,19]中均匀采样2500条样本，落盘作为该实验评测集。
+    在新增的几个环境（见新增环境设计）、难度[1,19]中均匀采样2500条样本，落盘作为该实验评测集。
 
 #### 训练环境
 
