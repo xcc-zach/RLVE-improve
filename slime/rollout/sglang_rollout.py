@@ -318,6 +318,8 @@ async def generate_rollout_async(args, rollout_id: int, data_source, data_buffer
         while isinstance(all_data[0], list):
             all_data = sum(all_data, [])
         log_dict = data_buffer.rlve_manager.update(samples = all_data)
+        log_dict["rollout/effective_prompt_rate"] = len(data) / len(all_data)
+        print(f"rlve {rollout_id}: {log_dict}", flush=True)
 
         if args.use_wandb :
             # Ensure the rlve metrics use rollout/step as x-axis by defining them explicitly
@@ -442,7 +444,7 @@ async def eval_rollout_single_dataset(args, rollout_id, name, path):
 
     data.sort(key=lambda sample: sample.index)
 
-    reward_key = args.reward_key or args.eval_reward_key
+    reward_key = args.eval_reward_key or args.reward_key
     return {
         name: {
             "rewards": [sample.reward if not reward_key else sample.reward[reward_key] for sample in data],
