@@ -13,6 +13,7 @@ from Gym.parameter_controllers.bezout_identity import BezoutIdentity_ParameterCo
 from Gym.parameter_controllers.binario import Binario_ParameterController
 from Gym.parameter_controllers.binario_no_adjacency_requirement import Binario_NoAdjacencyRequirement_ParameterController
 from Gym.parameter_controllers.binary_alternation import BinaryAlternation_ParameterController
+from Gym.parameter_controllers.binary_string_no_adjacent_count import BinaryStringNoAdjacentCount_ParameterController
 from Gym.parameter_controllers.binary_linear_equation_solution_counting import BinaryLinearEquation_SolutionCounting_ParameterController
 from Gym.parameter_controllers.binary_tree_leaf_num_expectation import BinaryTreeLeafNumExpectation_ParameterController
 from Gym.parameter_controllers.bit_equation_counting import BitEquationCounting_ParameterController
@@ -67,6 +68,7 @@ from Gym.parameter_controllers.difference_constraint_system_dag import Differenc
 from Gym.parameter_controllers.different_color_pairing import DifferentColorPairing_ParameterController
 from Gym.parameter_controllers.differentiate import Differentiate_ParameterController
 from Gym.parameter_controllers.digit_lis_counting import DigitLISCounting_ParameterController
+from Gym.parameter_controllers.digit_sum_interval import DigitSumInterval_ParameterController
 from Gym.parameter_controllers.discrete_logarithm import DiscreteLogarithm_ParameterController
 from Gym.parameter_controllers.disinfection import Disinfection_ParameterController
 from Gym.parameter_controllers.distinct_array_permutation import DistinctArrayPermutation_ParameterController
@@ -110,6 +112,7 @@ from Gym.parameter_controllers.grid_bfs import GridBFS_ParameterController
 from Gym.parameter_controllers.grid_coloring_counting import GridColoringCounting_ParameterController
 from Gym.parameter_controllers.grid_component import GridComponent_ParameterController
 from Gym.parameter_controllers.grid_local_minimum_counting import GridLocalMinimumCounting_ParameterController
+from Gym.parameter_controllers.grid_path_counting_with_blocks import GridPathCountingWithBlocks_ParameterController
 from Gym.parameter_controllers.grid_parity_construction import GridParityConstruction_ParameterController
 from Gym.parameter_controllers.grid_triangle_counting import GridTriangleCounting_ParameterController
 from Gym.parameter_controllers.halving_chain_counting import HalvingChainCounting_ParameterController
@@ -415,6 +418,8 @@ identifier2controller = {
     "Binario" : Binario_ParameterController,
     "Binario_NoAdjacencyRequirement" : Binario_NoAdjacencyRequirement_ParameterController,
     "BinaryAlternation" : BinaryAlternation_ParameterController,
+    "BinaryStringNoAdjacentCount" : BinaryStringNoAdjacentCount_ParameterController,
+    "binary_string_no_adjacent_count" : BinaryStringNoAdjacentCount_ParameterController,
     "BinaryLinearEquation_SolutionCounting" : BinaryLinearEquation_SolutionCounting_ParameterController,
     "BinaryTreeLeafNumExpectation" : BinaryTreeLeafNumExpectation_ParameterController,
     "BitEquationCounting" : BitEquationCounting_ParameterController,
@@ -469,6 +474,8 @@ identifier2controller = {
     "DifferentColorPairing" : DifferentColorPairing_ParameterController,
     "Differentiate" : Differentiate_ParameterController,
     "DigitLISCounting" : DigitLISCounting_ParameterController,
+    "DigitSumInterval" : DigitSumInterval_ParameterController,
+    "digit_sum_interval" : DigitSumInterval_ParameterController,
     "DiscreteLogarithm" : DiscreteLogarithm_ParameterController,
     "Disinfection" : Disinfection_ParameterController,
     "DistinctArrayPermutation" : DistinctArrayPermutation_ParameterController,
@@ -512,6 +519,8 @@ identifier2controller = {
     "GridColoringCounting" : GridColoringCounting_ParameterController,
     "GridComponent" : GridComponent_ParameterController,
     "GridLocalMinimumCounting" : GridLocalMinimumCounting_ParameterController,
+    "GridPathCountingWithBlocks" : GridPathCountingWithBlocks_ParameterController,
+    "grid_path_counting_with_blocks" : GridPathCountingWithBlocks_ParameterController,
     "GridParityConstruction" : GridParityConstruction_ParameterController,
     "GridTriangleCounting" : GridTriangleCounting_ParameterController,
     "HalvingChainCounting" : HalvingChainCounting_ParameterController,

@@ -13,6 +13,7 @@ from Gym.environments.bezout_identity import BezoutIdentity_Environment
 from Gym.environments.binario import Binario_Environment
 from Gym.environments.binario_no_adjacency_requirement import Binario_NoAdjacencyRequirement_Environment
 from Gym.environments.binary_alternation import BinaryAlternation_Environment
+from Gym.environments.binary_string_no_adjacent_count import BinaryStringNoAdjacentCount_Environment
 from Gym.environments.binary_linear_equation_solution_counting import BinaryLinearEquation_SolutionCounting_Environment
 from Gym.environments.binary_tree_leaf_num_expectation import BinaryTreeLeafNumExpectation_Environment
 from Gym.environments.bit_equation_counting import BitEquationCounting_Environment
@@ -67,6 +68,7 @@ from Gym.environments.difference_constraint_system_dag import DifferenceConstrai
 from Gym.environments.different_color_pairing import DifferentColorPairing_Environment
 from Gym.environments.differentiate import Differentiate_Environment
 from Gym.environments.digit_lis_counting import DigitLISCounting_Environment
+from Gym.environments.digit_sum_interval import DigitSumInterval_Environment
 from Gym.environments.discrete_logarithm import DiscreteLogarithm_Environment
 from Gym.environments.disinfection import Disinfection_Environment
 from Gym.environments.distinct_array_permutation import DistinctArrayPermutation_Environment
@@ -110,6 +112,7 @@ from Gym.environments.grid_bfs import GridBFS_Environment
 from Gym.environments.grid_coloring_counting import GridColoringCounting_Environment
 from Gym.environments.grid_component import GridComponent_Environment
 from Gym.environments.grid_local_minimum_counting import GridLocalMinimumCounting_Environment
+from Gym.environments.grid_path_counting_with_blocks import GridPathCountingWithBlocks_Environment
 from Gym.environments.grid_parity_construction import GridParityConstruction_Environment
 from Gym.environments.grid_triangle_counting import GridTriangleCounting_Environment
 from Gym.environments.halving_chain_counting import HalvingChainCounting_Environment
@@ -415,6 +418,8 @@ identifier2environment = {
     "Binario" : Binario_Environment,
     "Binario_NoAdjacencyRequirement" : Binario_NoAdjacencyRequirement_Environment,
     "BinaryAlternation" : BinaryAlternation_Environment,
+    "BinaryStringNoAdjacentCount" : BinaryStringNoAdjacentCount_Environment,
+    "binary_string_no_adjacent_count" : BinaryStringNoAdjacentCount_Environment,
     "BinaryLinearEquation_SolutionCounting" : BinaryLinearEquation_SolutionCounting_Environment,
     "BinaryTreeLeafNumExpectation" : BinaryTreeLeafNumExpectation_Environment,
     "BitEquationCounting" : BitEquationCounting_Environment,
@@ -469,6 +474,8 @@ identifier2environment = {
     "DifferentColorPairing" : DifferentColorPairing_Environment,
     "Differentiate" : Differentiate_Environment,
     "DigitLISCounting" : DigitLISCounting_Environment,
+    "DigitSumInterval" : DigitSumInterval_Environment,
+    "digit_sum_interval" : DigitSumInterval_Environment,
     "DiscreteLogarithm" : DiscreteLogarithm_Environment,
     "Disinfection" : Disinfection_Environment,
     "DistinctArrayPermutation" : DistinctArrayPermutation_Environment,
@@ -512,6 +519,8 @@ identifier2environment = {
     "GridColoringCounting" : GridColoringCounting_Environment,
     "GridComponent" : GridComponent_Environment,
     "GridLocalMinimumCounting" : GridLocalMinimumCounting_Environment,
+    "GridPathCountingWithBlocks" : GridPathCountingWithBlocks_Environment,
+    "grid_path_counting_with_blocks" : GridPathCountingWithBlocks_Environment,
     "GridParityConstruction" : GridParityConstruction_Environment,
     "GridTriangleCounting" : GridTriangleCounting_Environment,
     "HalvingChainCounting" : HalvingChainCounting_Environment,
