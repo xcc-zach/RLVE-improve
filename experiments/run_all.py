@@ -58,6 +58,8 @@ def run(args, run_name : str, environments : list[str], extra : list[str], eval_
         run_name,
         "--steps",
         str(args.steps),
+        "--eval-interval",
+        str(args.eval_interval),
         "--output-root",
         args.output_root,
         "--environment-list",
@@ -66,6 +68,22 @@ def run(args, run_name : str, environments : list[str], extra : list[str], eval_
         *eval_prompt_data,
         *extra,
     ]
+    if args.eval_max_response_len is not None :
+        command.extend(["--eval-max-response-len", str(args.eval_max_response_len)])
+    for flag, value in [
+        ("--num-gpus", args.num_gpus),
+        ("--gpu-mem-gb", args.gpu_mem_gb),
+        ("--context-parallel-size", args.context_parallel_size),
+        ("--rollout-max-response-len", args.rollout_max_response_len),
+        ("--max-tokens-per-gpu", args.max_tokens_per_gpu),
+        ("--rollout-batch-size", args.rollout_batch_size),
+        ("--n-samples-per-prompt", args.n_samples_per_prompt),
+        ("--over-sampling-batch-size", args.over_sampling_batch_size),
+        ("--sglang-server-concurrency", args.sglang_server_concurrency),
+        ("--sglang-mem-fraction-static", args.sglang_mem_fraction_static),
+    ] :
+        if value is not None :
+            command.extend([flag, str(value)])
     if args.resource_profile is not None :
         command.extend(["--resource-profile", args.resource_profile])
     if args.wandb_mode is not None :
@@ -212,10 +230,22 @@ def main() -> None :
     parser = argparse.ArgumentParser()
     parser.add_argument("--wandb-project", required=True)
     parser.add_argument("--steps", type=int, default=400)
+    parser.add_argument("--eval-interval", type=int, default=20)
+    parser.add_argument("--eval-max-response-len", type=int, default=None)
     parser.add_argument("--output-root", default="outputs/checkpoints")
     parser.add_argument("--resource-profile", choices=("repo", "auto"), default=None)
     parser.add_argument("--wandb-mode", choices=("online", "offline", "disabled"), default=None)
     parser.add_argument("--dynamic-sampling-filter-path", default=None)
+    parser.add_argument("--num-gpus", type=int, default=None)
+    parser.add_argument("--gpu-mem-gb", type=int, default=None)
+    parser.add_argument("--context-parallel-size", type=int, default=None)
+    parser.add_argument("--rollout-max-response-len", type=int, default=None)
+    parser.add_argument("--max-tokens-per-gpu", type=int, default=None)
+    parser.add_argument("--rollout-batch-size", type=int, default=None)
+    parser.add_argument("--n-samples-per-prompt", type=int, default=None)
+    parser.add_argument("--over-sampling-batch-size", type=int, default=None)
+    parser.add_argument("--sglang-server-concurrency", type=int, default=None)
+    parser.add_argument("--sglang-mem-fraction-static", type=float, default=None)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 

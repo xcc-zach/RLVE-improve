@@ -399,6 +399,7 @@ ray job submit --address="http://127.0.0.1:8265" \
    --eval-prompt-data {eval_prompt_data_args} \
    --n-samples-per-eval-prompt 1 \
    --eval-top-p 0.7 \
+   {"--eval-max-response-len " + q(args.eval_max_response_len) if args.eval_max_response_len is not None else ""} \
    --eval-input-key user_prompt \
    --eval-reward-key accuracy \
    --tensor-model-parallel-size 1 \
@@ -525,6 +526,7 @@ def main() -> None :
     parser.add_argument("--steps", type=int, default=400)
     parser.add_argument("--save-interval", type=int, default=10)
     parser.add_argument("--eval-interval", type=int, default=20)
+    parser.add_argument("--eval-max-response-len", type=int, default=None)
     parser.add_argument("--eval-only", action="store_true")
     parser.add_argument(
         "--eval-prompt-data",
