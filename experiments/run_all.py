@@ -10,8 +10,10 @@ NEW_ENVIRONMENTS = [
     "binary_string_no_adjacent_count",
     "grid_path_counting_with_blocks",
 ]
+EXP1_ENVIRONMENTS = ["Division", *NEW_ENVIRONMENTS]
 
 NEW_ENV_HELD_OUT_EVAL = ["NEW_ENV_HELD_OUT", "outputs/eval/new_environments/test.json"]
+EXP1_OOD_EVAL = ["OOD", "outputs/eval/out_of_distribution/test.json"]
 
 EXP2_ENVIRONMENTS = {
     "1" : ["Multiplication"],
@@ -115,7 +117,7 @@ def ensure_eval_data() -> None :
         config_output,
         num_samples = 100,
         difficulty_min = 0,
-        difficulty_max = 4,
+        difficulty_max = 9,
         environments = NEW_ENVIRONMENTS,
     ) :
         return
@@ -133,7 +135,7 @@ def ensure_eval_data() -> None :
             "--difficulty-min",
             "0",
             "--difficulty-max",
-            "4",
+            "9",
             "--environments",
             *NEW_ENVIRONMENTS,
         ],
@@ -148,7 +150,7 @@ def in_distribution_eval(environment : str) -> list[str] :
         config_path,
         num_samples = 100,
         difficulty_min = 0,
-        difficulty_max = 4,
+        difficulty_max = 9,
         environments = [environment],
     ) :
         subprocess.run(
@@ -165,13 +167,45 @@ def in_distribution_eval(environment : str) -> list[str] :
                 "--difficulty-min",
                 "0",
                 "--difficulty-max",
-                "4",
+                "9",
                 "--environments",
                 environment,
             ],
             check=True,
         )
     return ["IN_DIST_{}".format(environment), str(path)]
+
+
+def ensure_exp1_out_of_distribution_eval() -> None :
+    path = Path("outputs/eval/out_of_distribution/test.json")
+    config_path = Path("outputs/eval/out_of_distribution/evaluation_config.json")
+    if not path.exists() or not eval_config_matches(
+        config_path,
+        num_samples = 100,
+        difficulty_min = 0,
+        difficulty_max = 9,
+        environments = EXP1_ENVIRONMENTS,
+    ) :
+        subprocess.run(
+            [
+                "python",
+                "-m",
+                "experiments.make_eval_data",
+                "--output",
+                str(path),
+                "--config-output",
+                str(config_path),
+                "--num-samples",
+                "100",
+                "--difficulty-min",
+                "0",
+                "--difficulty-max",
+                "9",
+                "--environments",
+                *EXP1_ENVIRONMENTS,
+            ],
+            check=True,
+        )
 
 
 def main() -> None :
@@ -186,10 +220,10 @@ def main() -> None :
     args = parser.parse_args()
 
     ensure_eval_data()
+    ensure_exp1_out_of_distribution_eval()
 
-    exp1_envs = ["Division", *NEW_ENVIRONMENTS]
-    for environment in exp1_envs :
-        exp1_eval = in_distribution_eval(environment) + NEW_ENV_HELD_OUT_EVAL
+    for environment in EXP1_ENVIRONMENTS :
+        exp1_eval = in_distribution_eval(environment) + EXP1_OOD_EVAL
         run(
             args,
             "exp1_adaptive_{}".format(environment),
@@ -197,7 +231,7 @@ def main() -> None :
             ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-1.5b"],
             exp1_eval,
         )
-        for static_range in [(0, 1), (0, 4)] :
+        for static_range in [(0, 1), (0, 4), (0, 9)] :
             run(
                 args,
                 "exp1_static_{}_{}_{}".format(static_range[0], static_range[1], environment),

@@ -181,7 +181,6 @@ def log_eval_data(rollout_id, args, data):
             log_dict[f"eval/{key}-truncated_ratio"] = sum(truncated) / len(truncated)
 
     print(f"eval {rollout_id}: {log_dict}")
-    append_metrics(args.wandb_group, "eval", rollout_id, log_dict)
     if args.use_wandb:
         log_dict["eval/step"] = (
             rollout_id

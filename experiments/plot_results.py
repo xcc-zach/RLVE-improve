@@ -25,6 +25,7 @@ EXP1_CONFIGS = [
     ("adaptive", "Adaptive [h-1,h]", "exp1_adaptive_{environment}"),
     ("static_0_1", "Static [0,1]", "exp1_static_0_1_{environment}"),
     ("static_0_4", "Static [0,4]", "exp1_static_0_4_{environment}"),
+    ("static_0_9", "Static [0,9]", "exp1_static_0_9_{environment}"),
 ]
 EXP2_RUNS = [
     ("1", "1 env", "exp2_num_environment_1"),
@@ -182,7 +183,7 @@ def plot_series(series : list[tuple[str, list[tuple[int, float]]]], title : str,
         ys = [point[1] for point in points]
         plt.plot(xs, ys, marker="o", linewidth=1.8, markersize=3.5, label=label)
     plt.title(title)
-    plt.xlabel("rollout")
+    plt.xlabel("step")
     plt.ylabel(ylabel)
     plt.grid(True, alpha=0.25)
     plt.legend()
@@ -214,11 +215,11 @@ def make_plots(rows : list[dict], output_dir : Path) -> list[Path] :
             created.append(output)
 
         config_series = [
-            (label, metric_points(rows, template.format(environment=environment), "eval/HELD_OUT"))
+            (label, metric_points(rows, template.format(environment=environment), "eval/OOD"))
             for _, label, template in EXP1_CONFIGS
         ]
-        output = output_dir / "exp1" / environment / "held_out_accuracy.png"
-        if plot_series(config_series, "Experiment 1: {} held-out accuracy".format(environment), "accuracy", output) :
+        output = output_dir / "exp1" / environment / "out_of_distribution_accuracy.png"
+        if plot_series(config_series, "Experiment 1: {} out-of-distribution accuracy".format(environment), "accuracy", output) :
             created.append(output)
 
     exp2_series = [(label, metric_points(rows, run_name, "eval/NEW_ENV_HELD_OUT")) for _, label, run_name in EXP2_RUNS]
@@ -259,7 +260,7 @@ def write_summary(rows : list[dict], plots : list[Path], output : Path) -> None 
 
 def main() -> None :
     parser = argparse.ArgumentParser()
-    parser.add_argument("--wandb-root", default="wandb")
+    parser.add_argument("--wandb-root", default=None)
     parser.add_argument("--live-metrics-root", default="outputs/results/live")
     parser.add_argument("--output-dir", default="outputs/figures")
     parser.add_argument("--csv-output", default=None)
@@ -272,7 +273,8 @@ def main() -> None :
     args = parser.parse_args()
 
     rows = collect_live_metrics(Path(args.live_metrics_root))
-    rows.extend(collect_metrics(Path(args.wandb_root), parse_wandb_start_time(args.wandb_start_time)))
+    if args.wandb_root :
+        rows.extend(collect_metrics(Path(args.wandb_root), parse_wandb_start_time(args.wandb_start_time)))
     if args.csv_output :
         write_csv(rows, Path(args.csv_output))
     plots = make_plots(rows, Path(args.output_dir))

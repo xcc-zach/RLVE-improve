@@ -68,7 +68,7 @@ python -m experiments.run_all --wandb-project RLVE --steps 400
 experiments/run_all.sh
 ```
 
-`run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,4]`, and regenerates stale evaluation files if they were created with older difficulty settings. The new-environment held-out set is generated with 100 samples from difficulty `[0,4]`.
+`run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,9]`, and regenerates stale evaluation files if they were created with older difficulty settings. Experiment 1 uses one global out-of-distribution evaluation set at `outputs/eval/out_of_distribution/test.json`, generated from all Experiment 1 environments at difficulty `[0,9]`, and every Experiment 1 run evaluates on that same fixed set. The Experiment 2 new-environment held-out set is generated with 100 samples from difficulty `[0,9]`.
 
 Generate CSV metrics and any currently available PLAN figures from offline W&B stdout records:
 
@@ -78,4 +78,4 @@ python -m experiments.plot_results
 python -m experiments.plot_results --wandb-start-time 20260617_083616
 ```
 
-The plotter writes `outputs/results/metrics.csv`, `outputs/results/plot_summary.json`, and PNGs under `outputs/figures`. It is safe to rerun while experiments are still incomplete; missing curves are skipped until their runs have logged the corresponding metrics.
+The plotter writes `outputs/results/plot_summary.json` and PNGs under `outputs/figures`. It does not write `outputs/results/metrics.csv` unless `--csv-output` is provided. It is safe to rerun while experiments are still incomplete; missing curves are skipped until their runs have logged the corresponding metrics.

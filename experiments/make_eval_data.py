@@ -43,7 +43,7 @@ def main() -> None :
     parser.add_argument("--config-output", default="outputs/eval/new_environments/evaluation_config.json")
     parser.add_argument("--num-samples", type=int, default=100)
     parser.add_argument("--difficulty-min", type=int, default=0)
-    parser.add_argument("--difficulty-max", type=int, default=4)
+    parser.add_argument("--difficulty-max", type=int, default=9)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--environments", nargs="+", default=DEFAULT_ENVIRONMENTS)
     args = parser.parse_args()
