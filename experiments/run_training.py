@@ -127,14 +127,28 @@ def explicit_or_repo_assignments(args, profile) -> str :
     return "".join(lines)
 
 
+def valid_checkpoint_dir(path : Path | None) -> bool :
+    if path is None or not path.exists() :
+        return False
+    tracker = path / "latest_checkpointed_iteration.txt"
+    if not tracker.exists() :
+        return False
+    try :
+        return int(tracker.read_text().strip()) > 0
+    except Exception :
+        return False
+
+
 def build_command(args) -> str :
     profile = MODEL_PROFILES[args.model]
     save_dir = Path(args.output_root) / args.run_name
-    load_dir = args.load_dir or str(save_dir)
+    requested_load_dir = Path(args.load_dir) if args.load_dir else save_dir
+    load_dir = str(requested_load_dir) if valid_checkpoint_dir(requested_load_dir) else None
     submission_id = submission_id_for(args.run_name)
     environment_args = " ".join(q(environment) for environment in args.environment_list)
     eval_prompt_data_args = " ".join(q(item) for item in args.eval_prompt_data)
     eval_only_arg = "--eval-only" if args.eval_only else ""
+    load_arg = "--load {}".format(q(load_dir)) if load_dir is not None else ""
 
     rollout_function_args = []
     if args.difficulty_mode == "static" :
@@ -359,7 +373,7 @@ ray job submit --address="http://127.0.0.1:8265" \
    ${{MODEL_ARGS[@]}} \
    --hf-checkpoint {q(profile["hf_checkpoint"])} \
    --ref-load {q(profile["ref_load"])} \
-   --load {q(load_dir)} \
+   {load_arg} \
    --save {q(str(save_dir))} \
    --save-interval {args.save_interval} \
    --disable-rollout-global-dataset \

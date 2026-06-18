@@ -11,7 +11,6 @@ NEW_ENVIRONMENTS = [
     "grid_path_counting_with_blocks",
 ]
 
-HELD_OUT_EVAL = ["HELD_OUT", "data/HELD-OUT_ENVIRONMENTS/test.json"]
 NEW_ENV_HELD_OUT_EVAL = ["NEW_ENV_HELD_OUT", "outputs/eval/new_environments/test.json"]
 
 EXP2_ENVIRONMENTS = {
@@ -114,7 +113,7 @@ def ensure_eval_data() -> None :
     config_output = Path("outputs/eval/new_environments/evaluation_config.json")
     if output.exists() and eval_config_matches(
         config_output,
-        num_samples = 2500,
+        num_samples = 100,
         difficulty_min = 0,
         difficulty_max = 4,
         environments = NEW_ENVIRONMENTS,
@@ -130,7 +129,7 @@ def ensure_eval_data() -> None :
             "--config-output",
             str(config_output),
             "--num-samples",
-            "2500",
+            "100",
             "--difficulty-min",
             "0",
             "--difficulty-max",
@@ -190,7 +189,7 @@ def main() -> None :
 
     exp1_envs = ["Division", *NEW_ENVIRONMENTS]
     for environment in exp1_envs :
-        exp1_eval = in_distribution_eval(environment) + HELD_OUT_EVAL
+        exp1_eval = in_distribution_eval(environment) + NEW_ENV_HELD_OUT_EVAL
         run(
             args,
             "exp1_adaptive_{}".format(environment),
@@ -229,7 +228,7 @@ def main() -> None :
             NEW_ENV_HELD_OUT_EVAL,
         )
 
-    exp3_eval = in_distribution_eval("Sorting") + HELD_OUT_EVAL
+    exp3_eval = in_distribution_eval("Sorting") + NEW_ENV_HELD_OUT_EVAL
     run(
         args,
         "exp3_sorting_openreasoning_nemotron_1_5b",

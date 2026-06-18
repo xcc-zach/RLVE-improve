@@ -8,6 +8,7 @@ from torch_memory_saver import torch_memory_saver
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
 import wandb
+from experiments.metrics_recorder import append_metrics
 from slime.backends.utils.data import process_rollout_data
 from slime.ray.train_actor import TrainRayActor
 from slime.utils.distributed_utils import get_gloo_group
@@ -296,6 +297,7 @@ class FSDPTrainRayActor(TrainRayActor):
                         if "lr" in group:
                             log_dict[f"train/lr-pg_{gid}"] = group["lr"]
                     print(f"step {self.global_step}: {log_dict}")
+                    append_metrics(self.args.wandb_group, "step", self.global_step, log_dict)
                     if self.args.use_wandb:
                         log_dict["train/step"] = self.global_step
                         wandb.log(log_dict)

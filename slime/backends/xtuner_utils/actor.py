@@ -10,6 +10,7 @@ from xtuner.v1.data_proto.sequence_context import SequenceContext
 from xtuner.v1.model import get_model_config_from_hf
 
 import wandb
+from experiments.metrics_recorder import append_metrics
 from slime.backends.utils.data import process_rollout_data
 from slime.ray.train_actor import TrainRayActor
 from slime.utils.distributed_utils import get_gloo_group
@@ -258,9 +259,11 @@ class XTunerTrainRayActor(TrainRayActor):
                 global_grad_tokens=global_grad_tokens,
             )
             if dist.get_rank() == 0:
-                print(f"step {rollout_id * num_steps_per_rollout + i}: {log_dict}")
+                step = rollout_id * num_steps_per_rollout + i
+                print(f"step {step}: {log_dict}")
+                append_metrics(self.args.wandb_group, "step", step, log_dict)
                 if self.args.use_wandb:
-                    log_dict["train/step"] = rollout_id * num_steps_per_rollout + i // iters_per_step
+                    log_dict["train/step"] = step // iters_per_step
                     wandb.log(log_dict)
 
     def update_weights(self):  # type: ignore[override]

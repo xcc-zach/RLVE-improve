@@ -50,8 +50,13 @@ def parse_json(value : str) :
 
 
 def scan_wandb_file(path : Path) -> tuple[dict, list[dict]] :
+    if path.stat().st_size == 0 :
+        return {}, []
     datastore = DataStore()
-    datastore.open_for_scan(str(path))
+    try :
+        datastore.open_for_scan(str(path))
+    except AssertionError :
+        return {}, []
     config = {}
     rows = []
     try :
@@ -117,6 +122,30 @@ def collect_metrics(wandb_root : Path, start_time : datetime | None = None) -> l
         _, rows = scan_wandb_file(path)
         all_rows.extend(rows)
     return all_rows
+
+
+def collect_live_metrics(live_metrics_root : Path) -> list[dict] :
+    rows = []
+    for path in sorted(live_metrics_root.glob("*/metrics.jsonl")) :
+        for line in path.read_text().splitlines() :
+            if not line.strip() :
+                continue
+            try :
+                row = json.loads(line)
+            except json.JSONDecodeError :
+                continue
+            if {"run_name", "phase", "line_step", "metric", "value"}.issubset(row) :
+                rows.append(
+                    {
+                        "run_name" : row["run_name"],
+                        "phase" : row["phase"],
+                        "line_step" : int(row["line_step"]),
+                        "metric" : row["metric"],
+                        "value" : float(row["value"]),
+                        "wandb_file" : row.get("source", "live"),
+                    }
+                )
+    return rows
 
 
 def write_csv(rows : list[dict], output : Path) -> None :
@@ -231,8 +260,9 @@ def write_summary(rows : list[dict], plots : list[Path], output : Path) -> None 
 def main() -> None :
     parser = argparse.ArgumentParser()
     parser.add_argument("--wandb-root", default="wandb")
+    parser.add_argument("--live-metrics-root", default="outputs/results/live")
     parser.add_argument("--output-dir", default="outputs/figures")
-    parser.add_argument("--csv-output", default="outputs/results/metrics.csv")
+    parser.add_argument("--csv-output", default=None)
     parser.add_argument("--summary-output", default="outputs/results/plot_summary.json")
     parser.add_argument(
         "--wandb-start-time",
@@ -241,8 +271,10 @@ def main() -> None :
     )
     args = parser.parse_args()
 
-    rows = collect_metrics(Path(args.wandb_root), parse_wandb_start_time(args.wandb_start_time))
-    write_csv(rows, Path(args.csv_output))
+    rows = collect_live_metrics(Path(args.live_metrics_root))
+    rows.extend(collect_metrics(Path(args.wandb_root), parse_wandb_start_time(args.wandb_start_time)))
+    if args.csv_output :
+        write_csv(rows, Path(args.csv_output))
     plots = make_plots(rows, Path(args.output_dir))
     write_summary(rows, plots, Path(args.summary_output))
     print("parsed {} metric rows from {}".format(len(rows), args.wandb_root))

@@ -1,3 +1,17 @@
+# 启动命令
+
+```bash
+env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
+  NO_PROXY=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  no_proxy=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  python -m experiments.run_all \
+    --wandb-project RLVE \
+    --steps 400 \
+    --resource-profile auto \
+    --wandb-mode offline \
+    --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std
+```
+
 # PLAN.md Experiments
 
 Generate the new-environment held-out set:
@@ -54,7 +68,7 @@ python -m experiments.run_all --wandb-project RLVE --steps 400
 experiments/run_all.sh
 ```
 
-`run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,4]`, and regenerates stale evaluation files if they were created with older difficulty settings. The new-environment held-out set is generated with 2,500 samples from difficulty `[0,4]`.
+`run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,4]`, and regenerates stale evaluation files if they were created with older difficulty settings. The new-environment held-out set is generated with 100 samples from difficulty `[0,4]`.
 
 Generate CSV metrics and any currently available PLAN figures from offline W&B stdout records:
 

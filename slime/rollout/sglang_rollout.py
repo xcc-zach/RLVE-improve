@@ -5,6 +5,7 @@ import wandb
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
+from experiments.metrics_recorder import append_metrics
 from slime.utils.async_utils import run
 from slime.utils.data import Dataset
 from slime.utils.http_utils import get, post
@@ -320,6 +321,7 @@ async def generate_rollout_async(args, rollout_id: int, data_source, data_buffer
         log_dict = data_buffer.rlve_manager.update(samples = all_data)
         log_dict["rollout/effective_prompt_rate"] = len(data) / len(all_data)
         print(f"rlve {rollout_id}: {log_dict}", flush=True)
+        append_metrics(args.wandb_group, "rlve", rollout_id, log_dict)
 
         if args.use_wandb :
             # Ensure the rlve metrics use rollout/step as x-axis by defining them explicitly
@@ -445,10 +447,21 @@ async def eval_rollout_single_dataset(args, rollout_id, name, path):
     data.sort(key=lambda sample: sample.index)
 
     reward_key = args.eval_reward_key or args.reward_key
+    rewards = [sample.reward if not reward_key else sample.reward[reward_key] for sample in data]
+    truncated = [sample.status == Sample.Status.TRUNCATED for sample in data]
+    append_metrics(
+        args.wandb_group,
+        "eval",
+        rollout_id,
+        {
+            f"eval/{name}": sum(rewards) / len(rewards),
+            f"eval/{name}-truncated_ratio": sum(truncated) / len(truncated),
+        },
+    )
     return {
         name: {
-            "rewards": [sample.reward if not reward_key else sample.reward[reward_key] for sample in data],
-            "truncated": [sample.status == Sample.Status.TRUNCATED for sample in data],
+            "rewards": rewards,
+            "truncated": truncated,
         }
     }
 

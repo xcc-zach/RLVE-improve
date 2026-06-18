@@ -7,6 +7,7 @@ import ray
 import torch
 
 import wandb
+from experiments.metrics_recorder import append_metrics
 from slime.ray.rollout_data_source import RolloutDataSourceWithBuffer
 from slime.utils.misc import load_function
 from slime.utils.ray_utils import Box
@@ -180,6 +181,7 @@ def log_eval_data(rollout_id, args, data):
             log_dict[f"eval/{key}-truncated_ratio"] = sum(truncated) / len(truncated)
 
     print(f"eval {rollout_id}: {log_dict}")
+    append_metrics(args.wandb_group, "eval", rollout_id, log_dict)
     if args.use_wandb:
         log_dict["eval/step"] = (
             rollout_id
@@ -202,6 +204,7 @@ def log_rollout_data(rollout_id, args, samples, rollout_time):
         log_dict["perf/tokens_per_gpu_per_sec"] = sum(response_lengths) / rollout_time / args.rollout_num_gpus
     log_dict["perf/longest_sample_tokens_per_sec"] = max(response_lengths) / rollout_time
     print(f"perf {rollout_id}: {log_dict}")
+    append_metrics(args.wandb_group, "perf", rollout_id, log_dict)
     if args.use_wandb:
         log_dict["rollout/step"] = (
             rollout_id
