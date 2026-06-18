@@ -42,8 +42,8 @@ def main() -> None :
     parser.add_argument("--output", default="outputs/eval/new_environments/test.json")
     parser.add_argument("--config-output", default="outputs/eval/new_environments/evaluation_config.json")
     parser.add_argument("--num-samples", type=int, default=2500)
-    parser.add_argument("--difficulty-min", type=int, default=1)
-    parser.add_argument("--difficulty-max", type=int, default=19)
+    parser.add_argument("--difficulty-min", type=int, default=0)
+    parser.add_argument("--difficulty-max", type=int, default=4)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--environments", nargs="+", default=DEFAULT_ENVIRONMENTS)
     args = parser.parse_args()
@@ -70,6 +70,13 @@ def main() -> None :
                 "rm_type" : "rlve",
                 "n_samples_per_eval_prompt" : 1,
                 "accuracy_key" : "accuracy",
+                "generation" : {
+                    "num_samples" : args.num_samples,
+                    "difficulty_min" : args.difficulty_min,
+                    "difficulty_max" : args.difficulty_max,
+                    "environments" : args.environments,
+                    "seed" : args.seed,
+                },
             },
             indent=2,
         )

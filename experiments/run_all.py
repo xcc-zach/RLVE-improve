@@ -1,4 +1,5 @@
 import argparse
+import json
 import re
 import subprocess
 from pathlib import Path
@@ -83,14 +84,74 @@ def environments_from_script(path : str) -> list[str] :
     return matches[-1].split()
 
 
+def eval_config_matches(
+    path : Path,
+    *,
+    num_samples : int,
+    difficulty_min : int,
+    difficulty_max : int,
+    environments : list[str],
+) -> bool :
+    if not path.exists() :
+        return False
+    try :
+        payload = json.loads(path.read_text())
+    except Exception :
+        return False
+    generation = payload.get("generation")
+    if not isinstance(generation, dict) :
+        return False
+    return (
+        generation.get("num_samples") == num_samples
+        and generation.get("difficulty_min") == difficulty_min
+        and generation.get("difficulty_max") == difficulty_max
+        and generation.get("environments") == environments
+    )
+
+
 def ensure_eval_data() -> None :
-    if not Path("outputs/eval/new_environments/test.json").exists() :
-        subprocess.run(["python", "-m", "experiments.make_eval_data"], check=True)
+    output = Path("outputs/eval/new_environments/test.json")
+    config_output = Path("outputs/eval/new_environments/evaluation_config.json")
+    if output.exists() and eval_config_matches(
+        config_output,
+        num_samples = 2500,
+        difficulty_min = 0,
+        difficulty_max = 4,
+        environments = NEW_ENVIRONMENTS,
+    ) :
+        return
+    subprocess.run(
+        [
+            "python",
+            "-m",
+            "experiments.make_eval_data",
+            "--output",
+            str(output),
+            "--config-output",
+            str(config_output),
+            "--num-samples",
+            "2500",
+            "--difficulty-min",
+            "0",
+            "--difficulty-max",
+            "4",
+            "--environments",
+            *NEW_ENVIRONMENTS,
+        ],
+        check=True,
+    )
 
 
 def in_distribution_eval(environment : str) -> list[str] :
     path = Path("outputs/eval/in_distribution/{}.json".format(environment))
-    if not path.exists() :
+    config_path = path.with_name("{}_evaluation_config.json".format(environment))
+    if not path.exists() or not eval_config_matches(
+        config_path,
+        num_samples = 100,
+        difficulty_min = 0,
+        difficulty_max = 4,
+        environments = [environment],
+    ) :
         subprocess.run(
             [
                 "python",
@@ -99,13 +160,13 @@ def in_distribution_eval(environment : str) -> list[str] :
                 "--output",
                 str(path),
                 "--config-output",
-                str(path.with_name("{}_evaluation_config.json".format(environment))),
+                str(config_path),
                 "--num-samples",
-                "1000",
+                "100",
                 "--difficulty-min",
                 "0",
                 "--difficulty-max",
-                "19",
+                "4",
                 "--environments",
                 environment,
             ],
@@ -130,13 +191,21 @@ def main() -> None :
     exp1_envs = ["Division", *NEW_ENVIRONMENTS]
     for environment in exp1_envs :
         exp1_eval = in_distribution_eval(environment) + HELD_OUT_EVAL
-        run(args, "exp1_adaptive_{}".format(environment), [environment], ["--difficulty-mode", "adaptive"], exp1_eval)
-        for static_range in [(0, 1), (0, 20), (0, 100)] :
+        run(
+            args,
+            "exp1_adaptive_{}".format(environment),
+            [environment],
+            ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-1.5b"],
+            exp1_eval,
+        )
+        for static_range in [(0, 1), (0, 4)] :
             run(
                 args,
                 "exp1_static_{}_{}_{}".format(static_range[0], static_range[1], environment),
                 [environment],
                 [
+                    "--model",
+                    "openreasoning-nemotron-1.5b",
                     "--difficulty-mode",
                     "static",
                     "--static-min-difficulty",
@@ -150,17 +219,29 @@ def main() -> None :
     for count, environments in EXP2_ENVIRONMENTS.items() :
         if environments is None :
             environments = environments_from_script(
-                "scripts/training/DeepSeek-R1-Distill-Qwen-1.5B/rlve/num-environment={}.sh".format(count)
+                "scripts/training/Nemotron-Research-Reasoning-Qwen-1.5B-v2/rlve/num-environment={}.sh".format(count)
             )
-        run(args, "exp2_num_environment_{}".format(count), environments, ["--difficulty-mode", "adaptive"], NEW_ENV_HELD_OUT_EVAL)
+        run(
+            args,
+            "exp2_num_environment_{}".format(count),
+            environments,
+            ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-1.5b"],
+            NEW_ENV_HELD_OUT_EVAL,
+        )
 
     exp3_eval = in_distribution_eval("Sorting") + HELD_OUT_EVAL
-    run(args, "exp3_sorting_deepseek_r1_distill_qwen_1_5b", ["Sorting"], ["--difficulty-mode", "adaptive"], exp3_eval)
     run(
         args,
-        "exp3_sorting_deepseek_r1_distill_qwen_7b",
+        "exp3_sorting_openreasoning_nemotron_1_5b",
         ["Sorting"],
-        ["--difficulty-mode", "adaptive", "--model", "deepseek-r1-distill-qwen-7b"],
+        ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-1.5b"],
+        exp3_eval,
+    )
+    run(
+        args,
+        "exp3_sorting_openreasoning_nemotron_7b",
+        ["Sorting"],
+        ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-7b"],
         exp3_eval,
     )
 

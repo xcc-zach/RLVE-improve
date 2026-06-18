@@ -21,6 +21,51 @@ MODEL_PROFILES = {
         "sglang_server_concurrency" : 256,
         "sglang_mem_fraction_static" : 0.7,
     },
+    "nemotron-research-reasoning-qwen-1.5b-v2" : {
+        "model_script" : "scripts/models/deepseek-r1-distill-qwen-1.5B.sh",
+        "hf_checkpoint" : "../Nemotron-Research-Reasoning-Qwen-1.5B-v2",
+        "ref_load" : "../Nemotron-Research-Reasoning-Qwen-1.5B-v2_torch_dist",
+        "size" : "1.5b",
+        "num_gpus" : 8,
+        "context_parallel_size" : 8,
+        "rollout_max_response_len" : 24576,
+        "max_tokens_per_gpu" : 3072,
+        "rollout_batch_size" : 128,
+        "n_samples_per_prompt" : 16,
+        "over_sampling_batch_size" : 384,
+        "sglang_server_concurrency" : 256,
+        "sglang_mem_fraction_static" : 0.7,
+    },
+    "openreasoning-nemotron-1.5b" : {
+        "model_script" : "scripts/models/qwen2.5-1.5B.sh",
+        "hf_checkpoint" : "../OpenReasoning-Nemotron-1.5B",
+        "ref_load" : "../OpenReasoning-Nemotron-1.5B_torch_dist",
+        "size" : "1.5b",
+        "num_gpus" : 8,
+        "context_parallel_size" : 8,
+        "rollout_max_response_len" : 24576,
+        "max_tokens_per_gpu" : 3072,
+        "rollout_batch_size" : 128,
+        "n_samples_per_prompt" : 16,
+        "over_sampling_batch_size" : 384,
+        "sglang_server_concurrency" : 256,
+        "sglang_mem_fraction_static" : 0.7,
+    },
+    "openreasoning-nemotron-7b" : {
+        "model_script" : "scripts/models/qwen2.5-7B.sh",
+        "hf_checkpoint" : "../OpenReasoning-Nemotron-7B",
+        "ref_load" : "../OpenReasoning-Nemotron-7B_torch_dist",
+        "size" : "7b",
+        "num_gpus" : 8,
+        "context_parallel_size" : 4,
+        "rollout_max_response_len" : 24576,
+        "max_tokens_per_gpu" : 2048,
+        "rollout_batch_size" : 128,
+        "n_samples_per_prompt" : 16,
+        "over_sampling_batch_size" : 384,
+        "sglang_server_concurrency" : 512,
+        "sglang_mem_fraction_static" : 0.7,
+    },
     "deepseek-r1-distill-qwen-7b" : {
         "model_script" : "scripts/models/deepseek-r1-distill-qwen-7B.sh",
         "hf_checkpoint" : "../DeepSeek-R1-Distill-Qwen-7B",
@@ -436,10 +481,10 @@ def main() -> None :
     parser.add_argument("--wandb-project", required=True)
     parser.add_argument("--run-name", required=True)
     parser.add_argument("--environment-list", nargs="+", required=True)
-    parser.add_argument("--model", choices=sorted(MODEL_PROFILES), default="deepseek-r1-distill-qwen-1.5b")
+    parser.add_argument("--model", choices=sorted(MODEL_PROFILES), default="openreasoning-nemotron-1.5b")
     parser.add_argument("--difficulty-mode", choices=("adaptive", "static"), default="adaptive")
     parser.add_argument("--static-min-difficulty", type=int, default=0)
-    parser.add_argument("--static-max-difficulty", type=int, default=1)
+    parser.add_argument("--static-max-difficulty", type=int, default=4)
     parser.add_argument("--steps", type=int, default=400)
     parser.add_argument("--save-interval", type=int, default=10)
     parser.add_argument("--eval-interval", type=int, default=20)

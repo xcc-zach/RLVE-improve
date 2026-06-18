@@ -13,20 +13,21 @@ python -m experiments.run_training \
   --wandb-project RLVE \
   --run-name exp1_adaptive_digit_sum_interval \
   --environment-list digit_sum_interval \
+  --model openreasoning-nemotron-1.5b \
   --difficulty-mode adaptive \
   --steps 400
 ```
 
 By default, `run_training.py` keeps non-PLAN training/resource parameters aligned with the repository training scripts. For non-8-GPU or lower-memory machines, pass `--resource-profile auto` or explicitly override flags such as `--num-gpus`, `--gpu-mem-gb`, `--context-parallel-size`, `--rollout-max-response-len`, `--rollout-batch-size`, or `--n-samples-per-prompt`. The `auto` profile uses conservative batch size, sample count, and SGLang concurrency on 1-2 GPU machines while keeping the 1.5B response limit aligned with the repository default of 24576 tokens; on 2x40GB+ GPUs it uses 24576 response tokens for 1.5B and 4096 for 7B. `repo` remains the exact repository-style setting. The launcher also unsets proxy variables for Ray local endpoints, because proxying `127.0.0.1:8265` can break `ray job submit`. Dynamic sampling keeps the repository filter by default; for a low-resource smoke test only, pass `--dynamic-sampling-filter-path ''` to avoid an endless wait when every sampled answer receives the same reward.
 
-Use the DeepSeek 7B checkpoint with:
+Use the OpenReasoning 7B checkpoint with:
 
 ```bash
 python -m experiments.run_training \
   --wandb-project RLVE \
-  --run-name exp3_sorting_deepseek_r1_distill_qwen_7b \
+  --run-name exp3_sorting_openreasoning_nemotron_7b \
   --environment-list Sorting \
-  --model deepseek-r1-distill-qwen-7b \
+  --model openreasoning-nemotron-7b \
   --difficulty-mode adaptive \
   --steps 400
 ```
@@ -36,11 +37,12 @@ Run one static-difficulty job:
 ```bash
 python -m experiments.run_training \
   --wandb-project RLVE \
-  --run-name exp1_static_0_20_digit_sum_interval \
+  --run-name exp1_static_0_4_digit_sum_interval \
   --environment-list digit_sum_interval \
+  --model openreasoning-nemotron-1.5b \
   --difficulty-mode static \
   --static-min-difficulty 0 \
-  --static-max-difficulty 20 \
+  --static-max-difficulty 4 \
   --steps 400
 ```
 
@@ -52,7 +54,7 @@ python -m experiments.run_all --wandb-project RLVE --steps 400
 experiments/run_all.sh
 ```
 
-`run_all.py` generates 1,000 in-distribution evaluation problems per environment for computing average accuracy.
+`run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,4]`, and regenerates stale evaluation files if they were created with older difficulty settings. The new-environment held-out set is generated with 2,500 samples from difficulty `[0,4]`.
 
 Generate CSV metrics and any currently available PLAN figures from offline W&B stdout records:
 

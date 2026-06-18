@@ -24,8 +24,7 @@ EXP1_ENVIRONMENTS = [
 EXP1_CONFIGS = [
     ("adaptive", "Adaptive [h-1,h]", "exp1_adaptive_{environment}"),
     ("static_0_1", "Static [0,1]", "exp1_static_0_1_{environment}"),
-    ("static_0_20", "Static [0,20]", "exp1_static_0_20_{environment}"),
-    ("static_0_100", "Static [0,100]", "exp1_static_0_100_{environment}"),
+    ("static_0_4", "Static [0,4]", "exp1_static_0_4_{environment}"),
 ]
 EXP2_RUNS = [
     ("1", "1 env", "exp2_num_environment_1"),
@@ -34,8 +33,8 @@ EXP2_RUNS = [
     ("256", "256 envs", "exp2_num_environment_256"),
 ]
 EXP3_RUNS = [
-    ("1.5B", "DeepSeek-R1-Distill-Qwen-1.5B", "exp3_sorting_deepseek_r1_distill_qwen_1_5b"),
-    ("7B", "DeepSeek-R1-Distill-Qwen-7B", "exp3_sorting_deepseek_r1_distill_qwen_7b"),
+    ("1.5B", "OpenReasoning-Nemotron-1.5B", "exp3_sorting_openreasoning_nemotron_1_5b"),
+    ("7B", "OpenReasoning-Nemotron-7B", "exp3_sorting_openreasoning_nemotron_7b"),
 ]
 
 
