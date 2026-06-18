@@ -86,6 +86,9 @@
 
 # 实验
 
+- 实验1 2使用模型 OpenReasoning-Nemotron-1.5B
+- 实验验证发现DeepSeek-R1-Distill-Qwen-1.5B准确率总为0，不要用它
+
 ## 实验1：在论文外其他环境验证Static与Adaptive Difficulty效果
 
 ### 实验维度
@@ -129,7 +132,7 @@
 
 #### 训练环境
 
-参照scripts/training/DeepSeek-R1-Distill-Qwen-1.5B/rlve下配置
+参照scripts/training/Nemotron-Research-Reasoning-Qwen-1.5B-v2/rlve下配置
 - 1
 - 4
 - 16
@@ -137,12 +140,12 @@
 
 ## 实验3:不同尺寸模型的表现
 
-Gym/environments/sorting环境，Adaptive Difficulty [h,h-1]，训练400步，绘制DeepSeek-R1-Distill-Qwen-1.5B和DeepSeek-R1-Distill-Qwen-7B的有效提示率和分布内accuracy；一共两张图，每张图两条不同大小的模型的线
+Gym/environments/sorting环境，Adaptive Difficulty [h,h-1]，训练400步，绘制OpenReasoning-Nemotron-1.5B和OpenReasoning-Nemotron-7B的有效提示率和分布内accuracy；一共两张图，每张图两条不同大小的模型的线
 模型文件在项目上一级目录
 
 # 实现细节
 
-训练rollout和评测最大token数都截断到8192
+训练rollout和评测最大token数都截断到24576
 
 新增环境写到Gym对应文件下，必要时创建文件夹；其他所有新增代码都写到experiments文件夹下
 训练每10步缓存一次模型，后续可断点续训；所有缓存与结果输出到outputs文件夹
