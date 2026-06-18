@@ -450,10 +450,31 @@ import urllib.request
 base_url = "http://127.0.0.1:8265"
 job_id = os.environ["SUBMISSION_ID"]
 status_url = f"{{base_url}}/api/jobs/{{job_id}}"
+logs_url = f"{{base_url}}/api/jobs/{{job_id}}/logs"
 log_path = Path("/tmp/ray/session_latest/logs") / f"job-driver-{{job_id}}.log"
 terminal_status = {{"SUCCEEDED", "FAILED", "STOPPED"}}
 last_status = None
 last_error = None
+printed_log_bytes = 0
+
+
+def stream_new_logs():
+    global printed_log_bytes
+    try:
+        with urllib.request.urlopen(logs_url, timeout=5) as response:
+            payload = json.load(response)
+    except Exception:
+        return
+
+    logs = payload.get("logs") or ""
+    if not logs:
+        return
+    data = logs.encode("utf-8", errors="replace")
+    if len(data) <= printed_log_bytes:
+        return
+    chunk = data[printed_log_bytes:].decode("utf-8", errors="replace")
+    print(chunk, end="" if chunk.endswith("\\n") else "\\n", flush=True)
+    printed_log_bytes = len(data)
 
 while True:
     status = None
@@ -472,6 +493,8 @@ while True:
         last_status = status
     elif last_error:
         print(f"Waiting for Ray job {{job_id}} status: {{last_error}}", flush=True)
+
+    stream_new_logs()
 
     if status in terminal_status:
         if status == "SUCCEEDED":
