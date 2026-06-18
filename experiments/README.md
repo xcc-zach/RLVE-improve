@@ -6,9 +6,12 @@ env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
   no_proxy=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
   python -m experiments.run_all \
     --wandb-project RLVE \
-    --steps 400 \
+    --steps 10 \
+    --eval-interval 1 \
     --resource-profile auto \
     --wandb-mode offline \
+    --rollout-max-response-len 8192 \
+    --eval-max-response-len 8192 \
     --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std
 ```
 

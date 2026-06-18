@@ -95,7 +95,7 @@
 
 ### 实验维度
 
-- 训练步数 400
+- 训练步数 10
 - 一张图上包含4条配置的线，其他每个维度展开一张图，一共指标数x环境数张图
 
 #### 指标
@@ -124,7 +124,7 @@
 
 ### 实验维度
 
-- 训练步数 400
+- 训练步数 10
 - 使用Adaptive Difficulty [h,h-1]
 - 一张图，包含四条不同数量训练环境的线
 
@@ -143,19 +143,19 @@
 
 ## 实验3:不同尺寸模型的表现
 
-Gym/environments/sorting环境，Adaptive Difficulty [h,h-1]，训练400步，绘制OpenReasoning-Nemotron-1.5B和OpenReasoning-Nemotron-7B的有效提示率和分布内accuracy；一共两张图，每张图两条不同大小的模型的线
+Gym/environments/sorting环境，Adaptive Difficulty [h,h-1]，训练10步，绘制OpenReasoning-Nemotron-1.5B和OpenReasoning-Nemotron-7B的有效提示率和分布内accuracy；一共两张图，每张图两条不同大小的模型的线
 模型文件在项目上一级目录
 
 # 实现细节
 
-训练rollout和评测最大token数都截断到24576
+训练rollout和评测最大token数都截断到8192
 
 新增环境写到Gym对应文件下，必要时创建文件夹；其他所有新增代码都写到experiments文件夹下
 训练每10步缓存一次模型，后续可断点续训；所有缓存与结果输出到outputs文件夹
-所有实验每20步得到图上一个数据点
+所有实验每1步得到图上一个数据点
 
 每套训练配置一个bash脚本放到experiments下，例如exp1_adapt_diff_division.sh对应实验一的Adaptive Difficulty与Division环境，支持--step指定训练步数
 
-写一个run_all.sh，，以steps=400按顺序依次运行所有实验；已经跑到400步的实验就跳过
+写一个run_all.sh，，以steps=10按顺序依次运行所有实验；已经跑到10步的实验就跳过
 
 注意DAPO训练一定要启用  --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std
