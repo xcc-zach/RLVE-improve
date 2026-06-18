@@ -101,7 +101,7 @@ def in_distribution_eval(environment : str) -> list[str] :
                 "--config-output",
                 str(path.with_name("{}_evaluation_config.json".format(environment))),
                 "--num-samples",
-                "4000",
+                "1000",
                 "--difficulty-min",
                 "0",
                 "--difficulty-max",

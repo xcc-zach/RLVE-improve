@@ -50,6 +50,10 @@ def train(args):
     if args.offload:
         ray.get(rollout_manager.async_onload(tags=[GPU_MEMORY_TYPE_KV_CACHE]))
 
+    if args.eval_only:
+        ray.get(rollout_manager.async_eval(args.start_rollout_id))
+        return
+
     # train loop.
     # note that for async training, one can change the position of the sync operation(ray.get).
     for rollout_id in range(args.start_rollout_id, args.num_rollout):

@@ -475,6 +475,12 @@ def get_slime_extra_args_provider(add_custom_arguments=None):
             parser.add_argument("--eval-top-k", type=int, default=None)
             parser.add_argument("--eval-max-response-len", type=int, default=None)
             parser.add_argument("--eval-min-new-tokens", type=int, default=None)
+            parser.add_argument(
+                "--eval-only",
+                action="store_true",
+                default=False,
+                help="Run initialization and evaluation, then exit before training rollout.",
+            )
 
             return parser
 
@@ -991,7 +997,7 @@ def parse_args(add_custom_arguments=None):
             args.ckpt_step = args.ref_ckpt_step
         args.start_rollout_id = 0
 
-    if args.eval_interval is not None:
+    if args.eval_interval is not None or args.eval_only:
         assert args.eval_prompt_data is not None, "eval_prompt_data must be set when eval_interval is set"
         if len(args.eval_prompt_data) == 1:
             print(f"[legacy] only one eval_prompt_data detected, will assume it is data for aime")

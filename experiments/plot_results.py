@@ -4,6 +4,7 @@ import csv
 import json
 import re
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 from wandb.proto import wandb_internal_pb2
@@ -12,6 +13,7 @@ from wandb.sdk.internal.datastore import DataStore
 
 RUN_PATTERN = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 METRIC_PATTERN = re.compile(r"^(?:\([^)]*\)\s*)?(eval|rlve|rollout|step|perf)\s+(-?\d+):\s+(\{.*\})\s*$")
+WANDB_DIR_PATTERN = re.compile(r"^offline-run-(\d{8}_\d{6})-[^-]+$")
 
 EXP1_ENVIRONMENTS = [
     "Division",
@@ -91,9 +93,28 @@ def scan_wandb_file(path : Path) -> tuple[dict, list[dict]] :
     return config, rows
 
 
-def collect_metrics(wandb_root : Path) -> list[dict] :
+def parse_wandb_start_time(value : str | None) -> datetime | None :
+    if not value :
+        return None
+    try :
+        return datetime.strptime(value, "%Y%m%d_%H%M%S")
+    except ValueError as exc :
+        raise SystemExit("--wandb-start-time must use YYYYMMDD_HHMMSS, got {}".format(value)) from exc
+
+
+def wandb_run_time(path : Path) -> datetime | None :
+    match = WANDB_DIR_PATTERN.match(path.parent.name)
+    if not match :
+        return None
+    return datetime.strptime(match.group(1), "%Y%m%d_%H%M%S")
+
+
+def collect_metrics(wandb_root : Path, start_time : datetime | None = None) -> list[dict] :
     all_rows = []
     for path in sorted(wandb_root.glob("offline-run-*/run-*.wandb")) :
+        run_time = wandb_run_time(path)
+        if start_time is not None and run_time is not None and run_time < start_time :
+            continue
         _, rows = scan_wandb_file(path)
         all_rows.extend(rows)
     return all_rows
@@ -214,9 +235,14 @@ def main() -> None :
     parser.add_argument("--output-dir", default="outputs/figures")
     parser.add_argument("--csv-output", default="outputs/results/metrics.csv")
     parser.add_argument("--summary-output", default="outputs/results/plot_summary.json")
+    parser.add_argument(
+        "--wandb-start-time",
+        default=None,
+        help="Only parse offline W&B runs at or after this UTC timestamp, formatted as YYYYMMDD_HHMMSS.",
+    )
     args = parser.parse_args()
 
-    rows = collect_metrics(Path(args.wandb_root))
+    rows = collect_metrics(Path(args.wandb_root), parse_wandb_start_time(args.wandb_start_time))
     write_csv(rows, Path(args.csv_output))
     plots = make_plots(rows, Path(args.output_dir))
     write_summary(rows, plots, Path(args.summary_output))

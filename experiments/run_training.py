@@ -89,6 +89,7 @@ def build_command(args) -> str :
     submission_id = submission_id_for(args.run_name)
     environment_args = " ".join(q(environment) for environment in args.environment_list)
     eval_prompt_data_args = " ".join(q(item) for item in args.eval_prompt_data)
+    eval_only_arg = "--eval-only" if args.eval_only else ""
 
     rollout_function_args = []
     if args.difficulty_mode == "static" :
@@ -168,21 +169,21 @@ if [ "$RESOURCE_PROFILE" = "auto" ]; then
             if [ "$GPU_MEM_GB" -ge 70 ] && [ "$NUM_GPUS" -ge 8 ]; then
                 ROLLOUT_MAX_RESPONSE_LEN=8192
             elif [ "$GPU_MEM_GB" -ge 40 ] && [ "$NUM_GPUS" -ge 4 ]; then
-                ROLLOUT_MAX_RESPONSE_LEN=4096
+                ROLLOUT_MAX_RESPONSE_LEN=8192
             elif [ "$GPU_MEM_GB" -ge 40 ] && [ "$NUM_GPUS" -ge 2 ]; then
-                ROLLOUT_MAX_RESPONSE_LEN=2048
+                ROLLOUT_MAX_RESPONSE_LEN=4096
             else
-                ROLLOUT_MAX_RESPONSE_LEN=1024
+                ROLLOUT_MAX_RESPONSE_LEN=2048
             fi
         else
             if [ "$GPU_MEM_GB" -ge 70 ] && [ "$NUM_GPUS" -ge 8 ]; then
                 ROLLOUT_MAX_RESPONSE_LEN=24576
             elif [ "$GPU_MEM_GB" -ge 40 ] && [ "$NUM_GPUS" -ge 4 ]; then
-                ROLLOUT_MAX_RESPONSE_LEN=12288
+                ROLLOUT_MAX_RESPONSE_LEN=24576
             elif [ "$GPU_MEM_GB" -ge 40 ] && [ "$NUM_GPUS" -ge 2 ]; then
-                ROLLOUT_MAX_RESPONSE_LEN=2048
+                ROLLOUT_MAX_RESPONSE_LEN=24576
             else
-                ROLLOUT_MAX_RESPONSE_LEN=1024
+                ROLLOUT_MAX_RESPONSE_LEN=24576
             fi
         fi
     fi
@@ -191,6 +192,9 @@ if [ "$RESOURCE_PROFILE" = "auto" ]; then
         MAX_TOKENS_PER_GPU=$((ROLLOUT_MAX_RESPONSE_LEN / CONTEXT_PARALLEL_SIZE))
         if [ "$MAX_TOKENS_PER_GPU" -lt 512 ]; then
             MAX_TOKENS_PER_GPU=512
+        fi
+        if [ "$MODEL_SIZE" != "7b" ] && [ "$MAX_TOKENS_PER_GPU" -gt 3072 ]; then
+            MAX_TOKENS_PER_GPU=3072
         fi
         if [ "$MODEL_SIZE" = "7b" ] && [ "$MAX_TOKENS_PER_GPU" -gt 2048 ]; then
             MAX_TOKENS_PER_GPU=2048
@@ -332,6 +336,7 @@ ray job submit --address="http://127.0.0.1:8265" \
    --wandb-always-use-train-step \
    --balance-data \
    --eval-interval {args.eval_interval} \
+   {eval_only_arg} \
    --eval-prompt-data {eval_prompt_data_args} \
    --n-samples-per-eval-prompt 1 \
    --eval-top-p 0.7 \
@@ -438,6 +443,7 @@ def main() -> None :
     parser.add_argument("--steps", type=int, default=400)
     parser.add_argument("--save-interval", type=int, default=10)
     parser.add_argument("--eval-interval", type=int, default=20)
+    parser.add_argument("--eval-only", action="store_true")
     parser.add_argument(
         "--eval-prompt-data",
         nargs="+",

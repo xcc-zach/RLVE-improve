@@ -9,4 +9,9 @@ python -m experiments.run_all \
   --steps "${STEPS}" \
   "$@"
 
-python -m experiments.plot_results
+PLOT_ARGS=()
+if [ -n "${PLOT_WANDB_START_TIME:-}" ]; then
+  PLOT_ARGS+=(--wandb-start-time "${PLOT_WANDB_START_TIME}")
+fi
+
+python -m experiments.plot_results "${PLOT_ARGS[@]}"
