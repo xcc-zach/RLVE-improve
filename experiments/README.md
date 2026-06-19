@@ -15,6 +15,25 @@ env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
     --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std
 ```
 
+只跑实验3：
+
+```bash
+env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
+  NO_PROXY=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  no_proxy=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  experiments/run_exp3.sh
+```
+
+只跑实验3里的单个模型：
+
+```bash
+env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
+  NO_PROXY=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  no_proxy=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
+  EXP3_MODELS=7b \
+  experiments/run_exp3.sh
+```
+
 # PLAN.md Experiments
 
 Generate the new-environment held-out set:

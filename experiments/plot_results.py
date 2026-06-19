@@ -7,8 +7,12 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-from wandb.proto import wandb_internal_pb2
-from wandb.sdk.internal.datastore import DataStore
+try :
+    from wandb.proto import wandb_internal_pb2
+    from wandb.sdk.internal.datastore import DataStore
+except ImportError :
+    wandb_internal_pb2 = None
+    DataStore = None
 
 
 RUN_PATTERN = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
@@ -51,6 +55,8 @@ def parse_json(value : str) :
 
 
 def scan_wandb_file(path : Path) -> tuple[dict, list[dict]] :
+    if DataStore is None or wandb_internal_pb2 is None :
+        raise SystemExit("wandb is required to parse offline W&B files; use --live-metrics-root only or install wandb.")
     if path.stat().st_size == 0 :
         return {}, []
     datastore = DataStore()
