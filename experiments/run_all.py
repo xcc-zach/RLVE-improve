@@ -292,18 +292,11 @@ def main() -> None :
             NEW_ENV_HELD_OUT_EVAL,
         )
 
-    exp3_eval = in_distribution_eval("Sorting") + NEW_ENV_HELD_OUT_EVAL
+    exp3_eval = in_distribution_eval("Division") + EXP1_OOD_EVAL
     run(
         args,
-        "exp3_sorting_openreasoning_nemotron_1_5b",
-        ["Sorting"],
-        ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-1.5b"],
-        exp3_eval,
-    )
-    run(
-        args,
-        "exp3_sorting_openreasoning_nemotron_7b",
-        ["Sorting"],
+        "exp3_division_openreasoning_nemotron_7b",
+        ["Division"],
         ["--difficulty-mode", "adaptive", "--model", "openreasoning-nemotron-7b"],
         exp3_eval,
     )

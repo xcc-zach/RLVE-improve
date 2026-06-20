@@ -38,8 +38,8 @@ EXP2_RUNS = [
     ("256", "256 envs", "exp2_num_environment_256"),
 ]
 EXP3_RUNS = [
-    ("1.5B", "OpenReasoning-Nemotron-1.5B", "exp3_sorting_openreasoning_nemotron_1_5b"),
-    ("7B", "OpenReasoning-Nemotron-7B", "exp3_sorting_openreasoning_nemotron_7b"),
+    ("1.5B", "OpenReasoning-Nemotron-1.5B", "exp1_adaptive_Division"),
+    ("7B", "OpenReasoning-Nemotron-7B", "exp3_division_openreasoning_nemotron_7b"),
 ]
 
 
@@ -234,13 +234,18 @@ def make_plots(rows : list[dict], output_dir : Path) -> list[Path] :
         created.append(output)
 
     exp3_series = [(label, metric_points(rows, run_name, "rollout/effective_prompt_rate")) for _, label, run_name in EXP3_RUNS]
-    output = output_dir / "exp3" / "sorting_effective_prompt_rate.png"
-    if plot_series(exp3_series, "Experiment 3: Sorting effective prompt rate by model size", "effective prompt rate", output) :
+    output = output_dir / "exp3" / "division_effective_prompt_rate.png"
+    if plot_series(exp3_series, "Experiment 3: Division effective prompt rate by model size", "effective prompt rate", output) :
         created.append(output)
 
-    exp3_series = [(label, metric_points(rows, run_name, "eval/IN_DIST_Sorting")) for _, label, run_name in EXP3_RUNS]
-    output = output_dir / "exp3" / "sorting_in_distribution_accuracy.png"
-    if plot_series(exp3_series, "Experiment 3: Sorting in-distribution accuracy by model size", "accuracy", output) :
+    exp3_series = [(label, metric_points(rows, run_name, "eval/IN_DIST_Division")) for _, label, run_name in EXP3_RUNS]
+    output = output_dir / "exp3" / "division_in_distribution_accuracy.png"
+    if plot_series(exp3_series, "Experiment 3: Division in-distribution accuracy by model size", "accuracy", output) :
+        created.append(output)
+
+    exp3_series = [(label, metric_points(rows, run_name, "eval/OOD")) for _, label, run_name in EXP3_RUNS]
+    output = output_dir / "exp3" / "division_out_of_distribution_accuracy.png"
+    if plot_series(exp3_series, "Experiment 3: Division out-of-distribution accuracy by model size", "accuracy", output) :
         created.append(output)
 
     return created

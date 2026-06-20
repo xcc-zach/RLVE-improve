@@ -24,15 +24,7 @@ env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
   experiments/run_exp3.sh
 ```
 
-只跑实验3里的单个模型：
-
-```bash
-env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
-  NO_PROXY=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
-  no_proxy=127.0.0.1,localhost,0.0.0.0,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 \
-  EXP3_MODELS=7b \
-  experiments/run_exp3.sh
-```
+该命令会按实验三当前定义只运行 `OpenReasoning-Nemotron-7B`，训练环境为 `Division`，并评测有效提示率、分布内 accuracy、分布外 accuracy。
 
 # PLAN.md Experiments
 
@@ -61,10 +53,11 @@ Use the OpenReasoning 7B checkpoint with:
 ```bash
 python -m experiments.run_training \
   --wandb-project RLVE \
-  --run-name exp3_sorting_openreasoning_nemotron_7b \
-  --environment-list Sorting \
+  --run-name exp3_division_openreasoning_nemotron_7b \
+  --environment-list Division \
   --model openreasoning-nemotron-7b \
   --difficulty-mode adaptive \
+  --eval-prompt-data IN_DIST_Division outputs/eval/in_distribution/Division.json OOD outputs/eval/out_of_distribution/test.json \
   --steps 400
 ```
 

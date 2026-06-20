@@ -141,10 +141,26 @@
 - 16
 - 256
 
-## 实验3:不同尺寸模型的表现
+## 实验3: 使用OpenReasoning-Nemotron-7B复现实验一的Adaptive Difficulty配置
 
-Gym/environments/sorting环境，Adaptive Difficulty [h,h-1]，训练10步，绘制OpenReasoning-Nemotron-1.5B和OpenReasoning-Nemotron-7B的有效提示率和分布内accuracy；一共两张图，每张图两条不同大小的模型的线
-模型文件在项目上一级目录
+### 实验维度
+
+- 训练步数 10
+- 采用和实验一一致的 Adaptive Difficulty [h,h-1] 配置
+- 使用 Gym/environments/division 环境
+
+#### 指标
+
+- 有效提示率
+- 分布内accuracy
+    生成训练的环境上从难度[0,9]均匀采样的100道题计算平均准确率。
+- 分布外accuracy
+    从 #### 环境 涉及的训练环境以外的环境难度[0,9]均匀采样100道题固定为测试集，每次都在这个集合上计算平均准确率。实验1下所有实验共享该测试集。
+
+#### 模型
+
+- 唯一不同于实验一的是使用 OpenReasoning-Nemotron-7B 进行评测
+- 模型文件在项目上一级目录
 
 # 实现细节
 
