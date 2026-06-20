@@ -12,7 +12,10 @@ env http_proxy= https_proxy= all_proxy= HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
     --wandb-mode offline \
     --rollout-max-response-len 8192 \
     --eval-max-response-len 8192 \
-    --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std
+    --dynamic-sampling-filter-path slime.rollout.filter_hub.dynamic_sampling_filters.check_reward_nonzero_std \
+    --skip-run exp1_static_0_1_binary_string_no_adjacent_count \
+    --skip-run exp1_static_0_4_binary_string_no_adjacent_count \
+    --skip-run exp1_static_0_9_binary_string_no_adjacent_count
 ```
 
 只跑实验3：
