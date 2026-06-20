@@ -45,6 +45,9 @@ def checkpoint_exists(output_root : str, run_name : str, steps : int) -> bool :
 
 
 def run(args, run_name : str, environments : list[str], extra : list[str], eval_prompt_data : list[str]) -> None :
+    if run_name in args.skip_run :
+        print("skip requested {}".format(run_name), flush=True)
+        return
     if checkpoint_exists(args.output_root, run_name, args.steps) :
         print("skip existing {}".format(run_name), flush=True)
         return
@@ -246,6 +249,7 @@ def main() -> None :
     parser.add_argument("--over-sampling-batch-size", type=int, default=None)
     parser.add_argument("--sglang-server-concurrency", type=int, default=None)
     parser.add_argument("--sglang-mem-fraction-static", type=float, default=None)
+    parser.add_argument("--skip-run", action="append", default=[])
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 

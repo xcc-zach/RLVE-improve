@@ -79,8 +79,10 @@ Run the implemented PLAN matrix:
 
 ```bash
 python -m experiments.run_all --wandb-project RLVE --steps 400
+# skip one or more runs by name
+python -m experiments.run_all --wandb-project RLVE --steps 400 --skip-run exp1_static_0_1_binary_string_no_adjacent_count
 # or
-experiments/run_all.sh
+experiments/run_all.sh --skip-run exp1_static_0_1_binary_string_no_adjacent_count
 ```
 
 `run_all.py` generates 100 in-distribution evaluation problems per environment by uniformly sampling difficulty from `[0,9]`, and regenerates stale evaluation files if they were created with older difficulty settings. Experiment 1 uses one global out-of-distribution evaluation set at `outputs/eval/out_of_distribution/test.json`, generated from all Experiment 1 environments at difficulty `[0,9]`, and every Experiment 1 run evaluates on that same fixed set. The Experiment 2 new-environment held-out set is generated with 100 samples from difficulty `[0,9]`.
