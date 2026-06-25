@@ -1,5 +1,5 @@
 <div align="center">
-
+# 本项目改进实验参考PLAN.md
 # RLVE: Scaling Up Reinforcement Learning for Language Models with Adaptive Verifiable Environments
   
 Zhiyuan Zeng*, Hamish Ivison*, Yiping Wang*, Lifan Yuan*, Shuyue Stella Li, Zhuorui Ye, Siting Li, Jacqueline He, Runlong Zhou, Tong Chen, Chenyang Zhao, Yulia Tsvetkov, Simon Shaolei Du, Natasha Jaques, Hao Peng, Pang Wei Koh, Hannaneh Hajishirzi
